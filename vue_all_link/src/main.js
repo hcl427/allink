@@ -3,10 +3,10 @@ import App from './App.vue'
 import router from './router'
 import ElementUI from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css';
-import service from './request/http'
+import Axios from './request/http'
 
 Vue.use(ElementUI);
-Vue.prototype.$axios = service
+Vue.prototype.$Axios = Axios
 Vue.config.productionTip = false
 
 new Vue({
