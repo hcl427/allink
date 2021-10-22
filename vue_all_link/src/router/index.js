@@ -6,9 +6,22 @@ const router = new VueRouter({
   routes: [
     {
       path: '/',
-      // redirect: "/",
-      component: () => import('@/views/home.vue')
-    }
+      redirect: "/home",
+      name: "layout",
+      component: () => import('@/views/layout.vue'),
+      children: [
+        {
+          path: '/home',
+          name: 'home',
+          component: () => import('@/views/home.vue'),
+        },
+        {
+          path: '/messageBoard',
+          component: () => import('@/views/messageBoard/home.vue')
+        }
+      ]
+    },
+
   ]
 });
 export default router
