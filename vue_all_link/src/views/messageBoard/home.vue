@@ -9,7 +9,9 @@
         v-model="message"
       >
       </el-input>
-      <el-button type="primary" class="button" @click="speak">扶我起来发言</el-button>
+      <el-button type="primary" class="button" @click="speak"
+        >扶我起来发言</el-button
+      >
     </div>
     <div class="board">
       <ul>
@@ -25,32 +27,44 @@
 </template>
 <script>
 export default {
-  data(){
-    return{
-      message:""
-    }
+  data() {
+    return {
+      message: "",
+    };
   },
-  methods:{
-    speak(){
-      console.log(this.message);
-    }
-  }
-}
+  methods: {
+    async speak() {
+      let res = await this.$Axios.post("/send_message", { msg: this.message });
+      console.log("res", res);
+      if (res.data.success) {
+        this.$message({
+          message: "发言成功",
+          type: "success",
+        });
+        this.message = ''
+      }else if(res.data.msg){
+        this.$message.error(res.data.msg);
+      }else{
+        this.$message.error('发言失败');
+      }
+    },
+  },
+};
 </script>
 <style lang="less" scoped>
-.button{
+.button {
   float: right;
   margin-top: 20px;
 }
-.board{
+.board {
   margin-top: 100px;
-  ul{
-    li{
+  ul {
+    li {
       border-bottom: 1px solid #eee;
       padding: 10px;
-      .bot{
+      .bot {
         margin-top: 10px;
-        color:#c1bebe
+        color: #c1bebe;
       }
     }
   }

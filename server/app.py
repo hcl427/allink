@@ -2,7 +2,7 @@
 # # User : monkey  
 # # Date : 2021/10/19 10:57 上午
 # # Name : app.py
-from flask import Flask, render_template
+from flask import Flask, render_template, request, jsonify
 import pymysql
 import json
 
@@ -24,40 +24,27 @@ def hello():
             'img': info[1],
             'href': info[2]
         })
-    return json.dumps(res)
+    return jsonify(res)
 
 
-@app.route('/user/<name>')
-def user(name):
-    return {'name': name}
+@app.route('/api/send_message', methods=['POST'])
+def user():
+    data = request.get_json()
+    if len(data['msg']) <= 255:
+        sql = 'insert into user_message (message) value ("{}")'.format(data['msg'])
+        print(sql)
+        try:
+            cursor.execute(sql)
+            mysql_client.commit()
+            return jsonify({'success': True})
+        except Exception as e:
+            print({'success': False, 'msg': e})
+            return jsonify({'success': False})
+    else:
+        return jsonify({'success': False, 'msg': '长度超过限制'})
 
 
-
-
-# from urllib import parse
-# import requests
-# import re
-
-
-# sql = "select name, img, href from allink;"
-# cursor.execute(sql)
-# data = cursor.fetchall()
-# for info in data:
-#     if info[1]:
-#         continue
-#     key = info[0]
-#     url = 'https://ks.pconline.com.cn/download.shtml?q={}'.format(requests.utils.quote(key,encoding='gb2312'))
-#     print(key, url)
-#     headers = {
-#         'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.81 Safari/537.36'
-#     }
-#     response = requests.get(url, headers=headers)
-#     img = re.findall('#src="(.*?)"', response.text)
-#     if img:
-#         sql = "UPDATE allink SET img='{}' WHERE name='{}'".format('http:' + img[0], key)
-#         cursor.execute(sql)
-#         mysql_client.commit()
-
-
-
+if __name__ == '__main__':
+    app.debug = True
+    app.run()
 
